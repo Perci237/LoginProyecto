@@ -1,27 +1,31 @@
 const regbtn = document.getElementById("boton_registrarse"); //llamamos al botón de registro
 const usuario = document.getElementById("uName");
-const fname = document.getElementById("fname");
-const lname = document.getElementById("lname");
 const pass1 = document.getElementById("pass1");
 const pass2 = document.getElementById("pass2");
 const email = document.getElementById("email");
+let usersList = [];
+if (!Array.isArray(usersList)) {
+  usersList = [];
+};
 
-
-regbtn.addEventListener('click', (e)=> { //añadimos un manejador de eventos para click
+// Event Listener que valida los datos ingresados y, en caso positivo los guarda e inicia sesión, o de lo contrario muestra alerta de error
+regbtn.addEventListener('click', (e)=> { 
     e.preventDefault()
-    if (fname.value !== "" && lname.value !=="" && usuario.value !== "" && pass1.value !== "" && pass2.value && pass1.value.length >= 6 && email.value !== ""){ //si se cumplen estas condiciones 
-        localStorage.setItem("user", usuario.value);                                                                             //se guardan los datos en localStorage
-        localStorage.setItem('isLoggedIn', 'true');                                                                        //se guarda la sesión 
-        showAlertSuccess();                                                                                                //se muestra alerta de éxito
+    if (usuario.value !== "" && pass1.value !== "" && pass2.value && pass1.value.length >= 6 && email.value !== ""){ 
+        saveUser();
+        localStorage.setItem('user', usuario.value);                                                                             
+        localStorage.setItem('isLoggedIn', 'true');                                                                        
+        showAlertSuccess();                                                                                                
         setTimeout(function() {
-            location.href = "index.html"                                                                                   //y se redirecciona a la página principal
+            location.href = "index.html"                                                                                   
         }, 2000);                                                                                                                                                                                                       
-    } else {                                                                                                               //de lo contrario
-        showAlertError()                                                                                                   //se muestra la alerta        
+    } else {                                                                                                               
+        showAlertError()                                                                                                         
     };
 });
 
-function showAlertError() { //función que muestra la alerta
+// Función que muestra la alerta de error
+function showAlertError() { 
     document.getElementById("alert-danger").classList.add("show");
     setTimeout(function() {
         document.getElementById("alert-danger").reset;
@@ -29,9 +33,32 @@ function showAlertError() { //función que muestra la alerta
     }, 2000);
 };
 
-function showAlertSuccess() { //función que muestra la alerta
+// Función que muestra la alerta de éxito
+function showAlertSuccess() { 
     document.getElementById("alert-success").classList.add("show");
     setTimeout(function() {
         document.getElementById("alert-success").reset;
     }, 2000);
 };
+
+
+// Clase para guardar los datos de usuario-----------------------------------------------------------------------------------------------------------
+class User {
+  constructor(uName, email, password) {
+    this.uName = uName;
+    this.email = email;
+    this.password = password;
+  }
+  
+  saveUserData() {
+    usersList.push(this);
+    localStorage.setItem("usersList", JSON.stringify(usersList));
+  }
+}
+
+function saveUser(){
+  const currentUser = new User(usuario.value, email.value, pass1.value);
+  currentUser.saveUserData();
+}
+
+  
